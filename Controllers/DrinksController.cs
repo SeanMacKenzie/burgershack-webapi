@@ -42,13 +42,18 @@ namespace burgershack_c.Controllers
         [HttpPut("{id}")]
         public Drink Put(int id, [FromBody]Drink drink)
         {
-            return db.GetOneByIdAndUpdate(id, drink);
+            if (ModelState.IsValid)
+            {
+                return db.GetOneByIdAndUpdate(id, drink);
+            }
+            return null;
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            db.DeleteById(id);
         }
     }
 }

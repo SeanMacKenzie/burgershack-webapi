@@ -49,10 +49,8 @@ namespace burgershack_c.Repositories
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                int id = dbConnection.Execute($@"
-                INSERT INTO Sides (Name, Description, Price)
-                VALUES ({side.Name}, {side.Description}, {side.Price});
-                SELECT CAST(SCOPE_IDENTITY() as int)", side);
+                int id = dbConnection.Execute("INSERT INTO Sides (Name, Description, Price)" +
+                "VALUES (@Name, @Description, @Price) SELECT CAST(SCOPE_IDENTITY() as int)", side);
                 side.Id = id;
                 return side;
             }
@@ -65,12 +63,24 @@ namespace burgershack_c.Repositories
                 dbConnection.Open();
                 return dbConnection.QueryFirstOrDefault<Side>($@"
                 UPDATE Sides SET  
-                    Name = {side.Name},
-                    Description = {side.Description},
-                    Price = {side.Price}
+                    Name = @Name,
+                    Description = @Description,
+                    Price = @Price
                 WHERE Id = {id}
-                ");
+                SELECT * FROM Sides WHERE id = {id};", side);
             }
+        }
+
+        public void DeleteById(int id)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                dbConnection.QueryFirstOrDefault<Side>($@"
+                    DELETE FROM Sides
+                    WHERE id = {id}");
+            }
+
         }
 
     }

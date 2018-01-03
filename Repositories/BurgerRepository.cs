@@ -40,7 +40,7 @@ namespace burgershack_c.Repositories
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                return dbConnection.QueryFirstOrDefault<Burger>($"SELECT FROM Burgers WHERE id = {id}");
+                return dbConnection.QueryFirstOrDefault<Burger>($"SELECT * FROM Burgers WHERE id = {id}");
             }
         }
 
@@ -56,19 +56,31 @@ namespace burgershack_c.Repositories
             }
         }
 
-        public Burger GetOneByIdAndUpdate(int id, Burger burger)
+         public Burger GetOneByIdAndUpdate(int id, Burger burger)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
                 return dbConnection.QueryFirstOrDefault<Burger>($@"
                 UPDATE Burgers SET  
-                    Name = {burger.Name},
-                    Description = {burger.Description},
-                    Price = {burger.Price}
-                WHERE Id = {id}
-                ");
+                    Name = @Name,
+                    Description = @Description,
+                    Price = @Price
+                WHERE Id = {id};
+                SELECT * FROM Burgers WHERE id = {id};", burger);
             }
+        }
+
+        public void DeleteById(int id)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                dbConnection.QueryFirstOrDefault<Burger>($@"
+                    DELETE FROM Burgers
+                    WHERE id = {id}");
+            }
+
         }
 
     }
