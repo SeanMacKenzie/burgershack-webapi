@@ -11,10 +11,10 @@ namespace burgershack_c.Controllers
     [Route("api/[controller]")]
     public class BurgersController : Controller
     {
-        BurgerRepository db { get; set; }
-        public BurgersController()
+        private readonly BurgerRepository db;
+        public BurgersController(BurgerRepository burgerRepo)
         {
-            db = new BurgerRepository();
+            db = burgerRepo;
         }
 
         // GET api/values

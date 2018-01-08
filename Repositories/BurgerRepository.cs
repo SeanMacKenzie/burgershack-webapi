@@ -4,25 +4,20 @@ using System.Data.SqlClient;
 using System.Linq;
 using burgershack_c.Models;
 using Dapper;
+using MySql.Data.MySqlClient;
 
 namespace burgershack_c.Repositories
 {
     public class BurgerRepository
     {
-        private string _connectionString;
+        private readonly IDbConnection _db;
 
-        public BurgerRepository()
+        public BurgerRepository(IDbConnection db)
         {
-            _connectionString = @"Server=DESKTOP-P9K6TD5,49172;Database=burgershack;User Id=student;Password=student";
+            _db = db;
         }
 
-        public IDbConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_connectionString);
-            }
-        }
+        
 
         // Find One Find Many add update delete
 
@@ -49,8 +44,8 @@ namespace burgershack_c.Repositories
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                int id = dbConnection.Execute("INSERT INTO Burgers (Name, Description, Price)"
-                 + " VALUES (@Name, @Description, @Price) SELECT CAST(SCOPE_IDENTITY() as int)", burger);
+                int id = dbConnection.ExecuteScalar<int>("INSERT INTO Burgers (Name, Description, Price)"
+                 + " VALUES (@Name, @Description, @Price) SELECT LAST_INSERT_ID()", burger);
                 burger.Id = id;
                 return burger;
             }
